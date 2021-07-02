@@ -1,35 +1,35 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
+import { instance, reset, mock, verify } from 'ts-mockito';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule
-      ],
-      declarations: [
-        AppComponent
-      ],
+      imports: [RouterTestingModule],
+      declarations: [AppComponent],
+      providers: []
     }).compileComponents();
   });
 
-  it('should create the app', () => {
+  test('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
+  })
+
+  test("can run a test", () => {
+    expect(1).toEqual(1);
   });
 
-  it(`should have as title 'Jest-proyect-junio06'`, () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app.title).toEqual('Jest-proyect-junio06');
+  test('two plus two is four', () => {
+    expect(2 + 2).toBe(4);
+  //  let mockedX:Foo = mock(AppComponent);
+
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('.content span').textContent).toContain('Jest-proyect-junio06 app is running!');
-  });
+
+
 });
+
+
