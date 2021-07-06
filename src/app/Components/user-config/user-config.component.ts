@@ -15,12 +15,9 @@ export class UserConfigComponent implements OnInit {
   public inputDate!: FormControl;
   public menssage: string = '';
 
-  // public get value() : string {
-  //   return
-  // }
-  // 
-  constructor(public userService: UserConfigService, private fb: FormBuilder) {
-      this.inputDate = fb.control('', Validators.required);
+
+  constructor(public userService: UserConfigService) {
+      this.inputDate = new FormControl('', Validators.required);
   }
 
   ngOnInit(): void {
@@ -32,11 +29,12 @@ export class UserConfigComponent implements OnInit {
         return numero1 + numero2;
   }
 
-  public ValidarMayorEdad() {
+  public ValidarMayorEdadComponent() {
     if (this.inputDate.invalid) {
       this.menssage = 'Date invalid';
     } else {
-      if(this.userService.ValidarMayorEdad(this.inputDate.value)) {
+      const resultFunction = this.userService.ValidarMayorEdadServicio(this.inputDate.value);
+      if(this.userService.ValidarMayorEdadServicio(this.inputDate.value)) {
         this.menssage = 'Es mayor de edad';
       } else {
         this.menssage = 'No es mayor de edad';

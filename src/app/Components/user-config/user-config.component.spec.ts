@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { UserConfigComponent } from './user-config.component';
-import { mock, when } from 'ts-mockito';
+import { mock, verify, when, instance } from 'ts-mockito';
 import { UserModel } from '../../models/user.model';
 import { FormControl, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { UserConfigService } from '../../services/user-config.service';
@@ -9,10 +9,8 @@ import { UserConfigService } from '../../services/user-config.service';
 describe('UserConfigComponent', () => {
   let component: UserConfigComponent;
   let fixture: ComponentFixture<UserConfigComponent>;
-  let service: UserConfigService;
   let mockService: UserConfigService;
-  let mockForm: FormBuilder;
-  let mockControl: FormControl;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       declarations: [ UserConfigComponent ],
@@ -25,14 +23,22 @@ describe('UserConfigComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(UserConfigComponent);
     component = fixture.componentInstance;
-    component.ValidarMayorEdad();
+    component.ValidarMayorEdadComponent();
     fixture.detectChanges();
+
+    mockService = mock(UserConfigService);
+    when(mockService.ValidarMayorEdadServicio('1990-10-09')).thenReturn(true);
+    when(mockService.ValidarMayorEdadServicio('2020-05-01')).thenReturn(false);
+    let mySerivice: UserConfigService = instance(mockService);
+    component = new UserConfigComponent(mySerivice);
+
+    
   });
 
   beforeAll(() => {
-    mockService= mock(UserConfigService);
-    mockForm = mock(FormBuilder);
-    mockControl = mockForm.control('');
+    // 1. se crea el mock
+    mockService = mock(UserConfigService);
+
   });
   test('should create', () => {
     expect(component).toBeTruthy();
@@ -51,40 +57,55 @@ describe('UserConfigComponent', () => {
     // expect(component.SumarDosNumeros(dataUser.age,5)).toBe(55);
   });
 
-  test('validacion del input', () => {
-    //probar la funcion que devuelva el mensaje
-    when(mockControl.invalid).thenReturn(true);
-    expect(component.menssage).toBe('Date invalid');
+
+  test('Validar si es mayor de edad', () => {
+      component.inputDate.setValue('2020-10-09');
+      component.ValidarMayorEdadComponent();
+      expect(component.menssage).toBe('Es mayor de edad');
   });
 
-  test('validacion del formulario', () => {
-    //probar la funcion que devuelva el mensaje
-    when(mockControl.invalid).thenReturn(true);
-    expect(mockControl.invalid).toBeTruthy();
-  });
+  test('Validar si no es mayor de edad', () => {
+    component.inputDate.setValue('2020-05-01');
+    component.ValidarMayorEdadComponent();
+    expect(component.menssage).toBe('No es mayor de edad');
+});
 
-  test('Validar mayor de edad', () => {
-    // validar el reset del input
-    // mockControl.setValue('1993-06-03');
-    when(mockControl.value).thenReturn('1993-06-03');
-    when(mockControl.invalid).thenReturn(false);
-    when(mockService.ValidarMayorEdad(mockControl.value)).thenReturn(false);
-    expect(component.menssage).toBe('Es mayor de edad');
-  });
 
-  // test('Validar menor de edad', () => {
-  //   // validar el reset del input
-  //   when(mockForm.value).thenReturn('09-10-1990');
-  //   when(mockForm.invalid).thenReturn(false);
-  //   when(mockService.ValidarMayorEdad(mockForm.value)).thenReturn(false);
-  //   expect(component.menssage).toBe('No es mayor de edad');
+  // test('Es mayor de edad de Servicio', () => {
+  //    //2. se le da el comportamiento esperado
+
+
+  //   // 2.1 Se vuelve a llamar la funcion para que realice la validacion el el dato qeu se da en el punto 2
+  //   component.ValidarMayorEdadComponent();
+
+  //   expect(component.userService.ValidarMayorEdadServicio(component.inputDate.value)).toBeFalsy();
+  //   expect(component.menssage).toEqual('Es mayor de edad');
   // });
 
 
-  // let mockedBar:Bar = mock(Bar);
-  // when(mockedBar.getServiceName()).thenReturn("bartolo");
-  // // Getting instance from mock
-  // let foo:Foo = new Foo("pedro",mockedBar);
-  // Throwable exception = assertThrows(TypeError.class, () -> properties.get("A"));
-  // assertEquals("names must be the same", exception.getMessage());
+
+  // test('Validar mayor de edad componente', () => {
+  //   component.inputDate.setValue('1993-06-03');
+  //   component.ValidarMayorEdadComponent();
+  //   expect(component.menssage).toEqual('Es mayor de edad');
+  // })
+
+  // test('Valida si recibe vacio', () => {
+  //   when(mockService.ValidarMayorEdadServicio('')).thenReturn(false);
+  //   let mySerivice: UserConfigService = instance(mockService);
+  //   expect(mySerivice.ValidarMayorEdadServicio('')).toBeFalsy();
+  // })
+
+
+  // test('Validar que sea invalido', () => {
+  //   component.inputDate.setValue(458255);
+  //   expect(component.inputDate.invalid).toBeFalsy();
+  //   expect(component.menssage).toBe('Date invalid');
+  // });
+
+  // test('Validar que sea valido', () => {
+  //   component.inputDate.setValue('1993-06-03');
+  //   expect(component.inputDate.valid).toBeTruthy();
+  // })
+
 });
